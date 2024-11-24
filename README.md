@@ -211,7 +211,7 @@ The current version is `delta-spark_2.12:3.0.0` which corresponds to Apache Spar
 
    ```bash
    # Image entry point (M1)
-   docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 -entrypoint bash deltaio/delta-docker:latest_arm64
+   docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 deltaio/delta-docker:latest_arm64
    ```
 
 3. Running the above command gives a JupyterLab notebook URL, copy that URL and launch a browser to follow along the notebook and run each cell.
