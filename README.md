@@ -206,7 +206,7 @@ The current version is `delta-spark_2.12:3.0.0` which corresponds to Apache Spar
 
    ```bash
    # Build entry point
-   docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 delta_quickstart
+   docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 deltaio/delta-docker:latest
    ```
 
    ```bash
