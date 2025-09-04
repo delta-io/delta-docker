@@ -5,5 +5,5 @@ public
 
 .idea/
 
-.Cargo.lock
+Cargo.lock
 target/
