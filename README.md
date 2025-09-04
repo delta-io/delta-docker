@@ -1,17 +1,20 @@
 # Delta Lake Quickstart Docker
+This folder contains instructions and materials to get new users started with Delta Lake and work through the 
+quickstart materials using a self-contained Docker image.
 
-This folder contains instructions and materials to get new users started with Delta Lake and work through the quickstart materials using a self-contained Docker image.
+> Note: The basic prerequisite for following along using the Delta Lake Docker image is having Docker installed on your 
+> machine. Please follow the steps from the Docker website to install Docker locally. Based on your local machine 
+> operating system, please choose the appropriate option listed on 
+> the [Get Docker](https://docs.docker.com/get-docker/) page.
 
-> Note: The basic prerequisite for following along using Delta Lake Docker image is having Docker installed on your machine. Please follow the steps from the Docker website to install Docker locally. Based on your local machine operating system, please choose the appropriate option listed on the [Get Docker](https://docs.docker.com/get-docker/) page.
-
-Follow the steps below to build an Apache Spark<sup>TM</sup> image with Delta Lake installed, run a container, and follow the quickstart in an interactive notebook or shell with any of the options like Python, PySpark, Scala Spark or even Rust.
+Follow the steps below to build an Apache Spark<sup>TM</sup> image with Delta Lake installed, run a container, and follow the quickstart in an interactive notebook or shell with any of the options like Python, PySpark, Scala Spark, and even Rust.
 
 1. [Working with Docker](#working-with-docker)
    1. [Build the image](#build-the-image)
    2. [Docker Hub](#docker-hub)
 2. [Choose an interface](#choose-an-interface)
 
-> Note: Python version available in this Docker image is 3.9.2 and is available as `python3`.
+> Note: The Python version available in this Docker image is 3.10.12 and is available as `python3`.
 
 ## Working with Docker
 
@@ -19,7 +22,7 @@ Follow the steps below to build an Apache Spark<sup>TM</sup> image with Delta La
 
 1. Clone this repo
 2. Navigate to the cloned folder
-3. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
+3. Open a bash shell (if on Windows, use git bash, WSL, or any shell configured for bash commands)
 
 ```bash
 docker build -t delta_quickstart -f Dockerfile .
@@ -27,24 +30,26 @@ docker build -t delta_quickstart -f Dockerfile .
 
 #### Build Entry Point
 
-Your entry point for this locally built docker file is
+Your entry point for this locally built Docker file is
 
 ```bash
-docker run --name delta_quickstart --rm -it --entrypoint bash delta_quickstart
+docker run \
+  --name delta_quickstart \
+  --rm -it \
+  --entrypoint bash delta_quickstart
 ```
 
 ### Docker Hub
 
 You can also download the image from DockerHub at [Delta Lake DockerHub](https://go.delta.io/dockerhub)
 
-Note, there are different versions of the Delta Lake docker
+| Tag               | Platform    | Python | Rust   | Delta-Spark | Spark | JupyterLab | Pandas | ROAPI  |
+|-------------------|-------------|--------|--------|-------------|-------|------------|--------|--------|
+| 1.0.0_3.0.0       | amd64       | 0.12.0 | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0  |
+| 1.0.0_3.0.0_arm64 | arm64       | 0.12.0 | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0  |
+| 4.0.0             | arm64/amd64 | 1.1.14 | 1.1.14 | 4.0.0       | 4.0.0 | 4.4.6      | 2.3.2  | 0.12.6 |
+| latest            | arm64/amd64 | 1.1.14 | 1.1.14 | 4.0.0       | 4.0.0 | 4.4.6      | 2.3.2  | 0.12.6 |
 
-| Tag    | Platform    | Python  | Rust   | Delta-Spark | Spark | JupyterLab | Pandas | ROAPI   |
-|--------|-------------|---------| ------ |-------------| ----- |------------|--------|---------|
-| 4.0.0  | arm64/amd64 | 3.10.12 | 1.1.14 | 4.0.0       | 4.0.0 | 4.4.6      | 2.3.2  | 0.12.6  |
-| latest | arm64/amd64 | 3.10.12 | 1.1.14 | 4.0.0       | 4.0.0 | 4.4.6      | 2.3.2  | 0.12.6  |
-
-> Note, the arm64 version is built for ARM64 platforms using Apple Silicon or ARM CPUs.
 
 ## Running the Docker environment
 >  We've moved to using multiplatform Docker images. You can now download the image from DockerHub at [Delta Lake DockerHub](https://go.delta.io/dockerhub).
@@ -83,141 +88,144 @@ The current version is `delta-spark_2.13:4.0.0` which corresponds to Apache Spar
 - [Scala Shell](#scala-shell)
 - [Delta Rust API](#delta-rust-api)
 - [ROAPI](#optional-roapi)
-
+---
 ### delta-rs Python
 
-1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
+1. Open a bash shell (if on Windows, use git bash, WSL, or any shell configured for bash commands)
 
 2. Run a container from the image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Launch a _python_ interactive shell session with `python3`
 
-```bash
-python3
-```
+    ```bash
+    python3
+    ```
 
-> Note: The Delta Rust Python bindings are already installed in this Docker. To do this manually in your own environment, run the command: `pip3 install deltalake==1.1.4`
+    > Note: The Delta Rust Python bindings are already installed in this Docker. To do this manually in your own environment, run the command: `pip3 install deltalake==1.1.4`
 
-1. Run some basic commands in the shell to write to and read from Delta Lake with Pandas
+4. Run some basic commands in the shell to write to and read from Delta Lake with Pandas
 
-```python
-import pandas as pd
-from deltalake.writer import write_deltalake
-from deltalake import DeltaTable
+    ```python
+    import pandas as pd
+    from deltalake.writer import write_deltalake
+    from deltalake import DeltaTable
 
-# Create a Pandas DataFrame
-df = pd.DataFrame({"data": range(5)})
+    # Create a Pandas DataFrame
+    df = pd.DataFrame({"data": range(5)})
 
-# Write to the Delta Lake table
-write_deltalake("/tmp/deltars_table", df)
+    # Write to the Delta Lake table
+    write_deltalake("/tmp/deltars_table", df)
 
-# Append new data
-df = pd.DataFrame({"data": range(6, 11)})
-write_deltalake("/tmp/deltars_table", df, mode="append")
+    # Append new data
+    df = pd.DataFrame({"data": range(6, 11)})
+    write_deltalake("/tmp/deltars_table", df, mode="append")
 
-# Read the Delta Lake table
-dt = DeltaTable("/tmp/deltars_table")
+    # Read the Delta Lake table
+    dt = DeltaTable("/tmp/deltars_table")
 
-# Show the Delta Lake table
-dt.to_pandas()
-```
+    # Show the Delta Lake table
+    dt.to_pandas()
+    ```
 
-```python
-## Output
-  data
-0     0
-1     1
-2     2
-...
-8     9
-9    10
-```
+    ```python
+    ## Output
+       data
+    0     0
+    1     1
+    2     2
+    ...
+    8     9
+    9    10
+    ```
 
-1. Review the files
+5. Review the files
 
-```python
-# List files for the Delta Lake table
-dt.files()
-```
+    ```python
+    # List files for the Delta Lake table
+    dt.files()
+    ```
 
-```python
-## Output
-['0-6944fddf-60e3-4eab-811d-1398e9f64073-0.parquet', '1-66c7ee6e-6aab-4c74-866d-a82790102652-0.parquet']
-```
+    ```python
+    ## Output
+    ['0-6944fddf-60e3-4eab-811d-1398e9f64073-0.parquet', '1-66c7ee6e-6aab-4c74-866d-a82790102652-0.parquet']
+    ```
 
-1. Review history
+6. Review history
 
-```python
-# Review history
-dt.history()
-```
+   ```python
+    # Review history
+    dt.history()
+    ```
 
-```python
-## Output
-[{'timestamp': 1698002214493, 'operation': 'WRITE', 'operationParameters': {'mode': 'Append', 'partitionBy': '[]'}, 'clientVersion': 'delta-rs.0.17.0', 'version': 1}, {'timestamp': 1698002207527, 'operation': 'CREATE TABLE', 'operationParameters': {'mode': 'ErrorIfExists', 'protocol': '{"minReaderVersion":1,"minWriterVersion":1}', 'location': 'file:///tmp/deltars_table', 'metadata': '{"configuration":{},"created_time":1698002207525,"description":null,"format":{"options":{},"provider":"parquet"},"id":"bf749aab-22b6-484b-bd73-dc1680ee4384","name":null,"partition_columns":[],"schema":{"fields":[{"metadata":{},"name":"data","nullable":true,"type":"long"}],"type":"struct"}}'}, 'clientVersion': 'delta-rs.0.17.0', 'version': 0}]
-```
+    ```python
+    ## Output
+    [{'timestamp': 1698002214493, 'operation': 'WRITE', 'operationParameters': {'mode': 'Append', 'partitionBy': '[]'}, 'clientVersion': 'delta-rs.0.17.0', 'version': 1}, {'timestamp': 1698002207527, 'operation': 'CREATE TABLE', 'operationParameters': {'mode': 'ErrorIfExists', 'protocol': '{"minReaderVersion":1,"minWriterVersion":1}', 'location': 'file:///tmp/deltars_table', 'metadata': '{"configuration":{},"created_time":1698002207525,"description":null,"format":{"options":{},"provider":"parquet"},"id":"bf749aab-22b6-484b-bd73-dc1680ee4384","name":null,"partition_columns":[],"schema":{"fields":[{"metadata":{},"name":"data","nullable":true,"type":"long"}],"type":"struct"}}'}, 'clientVersion': 'delta-rs.0.17.0', 'version': 0}]
+    ```
 
-1. Time Travel (load older version of table)
+7. Time Travel (load an older version of the table)
 
-```python
-# Load initial version of table
-dt.load_version(0)
+    ```python
+    # Load initial version of table
+    dt.load_version(0)
 
-# Show table
-dt.to_pandas()
-```
+    # Show table
+    dt.to_pandas()
+    ```
 
-```python
-## Output
-  data
-0     0
-1     1
-2     2
-3     3
-4     4
-```
+    ```python
+    ## Output
+      data
+    0     0
+    1     1
+    2     2
+    3     3
+    4     4
+    ```
 
-1. Follow the delta-rs Python documentation [here](https://delta-io.github.io/delta-rs/python/usage.html#)
+    > Tip: Follow the delta-rs Python documentation [here](https://delta-io.github.io/delta-rs/python/usage.html#)
 
-1. To verify that you have a Delta Lake table, you can list the contents within the folder of your Delta Lake table. For example, in the previous code, you saved the table in `/tmp/deltars-table`. Once you close your `python3` process, run a list command in your Docker shell and you should get something similar to below.
+8. To verify that you have a Delta Lake table, you can list the contents within the folder of your Delta Lake table. For example, in the previous code, you saved the table in `/tmp/deltars-table`. Once you close your `python3` process, run a list command in your Docker shell, and you should get something similar to below.
 
-```bash
-$ ls -lsgA /tmp/deltars_table
-```
+    ```bash
+    $ ls -lsgA /tmp/deltars_table
+    ```
 
-```bash
-total 12
-4 -rw-r--r-- 1 NBuser 1689 Oct 22 19:16 0-6944fddf-60e3-4eab-811d-1398e9f64073-0.parquet
-4 -rw-r--r-- 1 NBuser 1691 Oct 22 19:16 1-66c7ee6e-6aab-4c74-866d-a82790102652-0.parquet
-4 drwxr-xr-x 2 NBuser 4096 Oct 22 19:16 _delta_log
-```
+    ```bash
+    total 12
+    4 -rw-r--r-- 1 NBuser 1689 Oct 22 19:16 0-6944fddf-60e3-4eab-811d-1398e9f64073-0.parquet
+    4 -rw-r--r-- 1 NBuser 1691 Oct 22 19:16 1-66c7ee6e-6aab-4c74-866d-a82790102652-0.parquet
+    4 drwxr-xr-x 2 NBuser 4096 Oct 22 19:16 _delta_log
+    ```
 
-1. [Optional] Skip ahead to try out the [Delta Rust API](#delta-rust-api) and [ROAPI](#optional-roapi)
+9. [Optional] Skip ahead to try out the [Delta Rust API](#delta-rust-api) and [ROAPI](#optional-roapi)
+---
 
 ### JupyterLab Notebook
 
-1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
+1. Open a bash shell (if on Windows, use git bash, WSL, or any shell configured for bash commands)
+2. Run a container from the image with a JupyterLab entrypoint
 
-2. Run a container from the image with a JuypterLab entrypoint
+    ```bash
+    # Build entry point
+    docker run \
+      --name delta_quickstart \
+      --rm \
+      -it \
+      -p 8888-8889:8888-8889 \
+      delta_quickstart
+    ```
 
-```bash
-# Build entry point
-docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 delta_quickstart
-```
+3. Running the above command gives a JupyterLab notebook URL. Copy that URL and launch a browser to follow along with the notebook and run each cell.
 
-
-
-3. Running the above command gives a JupyterLab notebook URL, copy that URL and launch a browser to follow along the notebook and run each cell.
-
-   > **Note that you may also launch the pyspark or scala shells after launching a terminal in JupyterLab**
-
+    > **Note that you may also launch the pyspark or scala shells after launching a terminal in JupyterLab**
+---
 ### PySpark Shell
 
-1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
+1. Open a bash shell (if on Windows, use git bash, WSL, or any shell configured for bash commands)
 
 2. Run a container from the image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
-3. Launch a pyspark interactive shell session
+3. Launch a PySpark interactive shell session
 
    ```bash
 
@@ -274,8 +282,9 @@ docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 delta_quickst
    ```bash
    $ ls -lsgA /tmp/delta-table
    ```
+<details title="Output">
 
-   ```bash
+   ```text
    total 52
    4 drwxr-xr-x 2 NBuser 4096 Oct 22 19:23 _delta_log
    4 -rw-r--r-- 1 NBuser  296 Oct 22 19:23 part-00000-dc0fd6b3-9c0f-442f-a6db-708301b27bd2-c000.snappy.parquet
@@ -292,13 +301,16 @@ docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 delta_quickst
    4 -rw-r--r-- 1 NBuser   12 Oct 22 19:23 .part-00009-b58e8445-07b7-4e2a-9abf-6fea8d0c3e3f-c000.snappy.parquet.crc
    ```
 
+</details>
+---
+
 ### Scala Shell
 
-1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
+1. Open a bash shell (if on Windows, use git bash, WSL, or any shell configured for bash commands)
 
 2. Run a container from the image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
-3. Launch a scala interactive shell session
+3. Launch a Scala interactive shell session
 
    ```bash
    $SPARK_HOME/bin/spark-shell --packages io.delta:${DELTA_PACKAGE_VERSION} \
@@ -309,7 +321,7 @@ docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 delta_quickst
 
 4. Run some basic commands in the shell
 
-   > note: if you've already written to the Delta table in the python shell example, use `.mode("overwrite")` to overwrite the current delta table. You can always time-travel to rewind.
+   > Note: if you've already written to the Delta table in the Python shell example, use `.mode("overwrite")` to overwrite the current Delta table. You can always time-travel to rewind.
 
    ```scala
    // Create a Spark DataFrame
@@ -350,35 +362,35 @@ docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 delta_quickst
 
 5. Follow the quickstart [here](https://docs.delta.io/latest/quick-start.html#create-a-table&language-scala)
 
-6. To verify that you have a Delta Lake table, you can list the contents within the folder of your Delta Lake table. For example, in the previous code, you saved the table in `/tmp/delta-table`. Once you close your Scala Spark process [`spark-shell`], run a list command in your Docker shell and you should get something similar to below.
+6. To verify that you have a Delta Lake table, you can list the contents within the folder of your Delta Lake table. For example, in the previous code, you saved the table in `/tmp/delta-table`. Once you close your Scala Spark process [`spark-shell`], run a list command in your Docker shell, and you should get something similar to below.
 
-   ```bash
-   $ ls -lsgA /tmp/delta-table
-   ```
-
-   ```bash
-   total 52
-   4 drwxr-xr-x 2 NBuser 4096 Oct 22 19:28 _delta_log
-   4 -rw-r--r-- 1 NBuser  296 Oct 22 19:28 part-00000-f1f417f7-df64-4c7c-96f2-6a452ae2b49e-c000.snappy.parquet
-   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00000-f1f417f7-df64-4c7c-96f2-6a452ae2b49e-c000.snappy.parquet.crc
-   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00001-b28acb6f-f08a-460f-a24e-4d9c1affee86-c000.snappy.parquet
-   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00001-b28acb6f-f08a-460f-a24e-4d9c1affee86-c000.snappy.parquet.crc
-   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00003-29079c58-d1ad-4604-9c04-0f00bf09546d-c000.snappy.parquet
-   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00003-29079c58-d1ad-4604-9c04-0f00bf09546d-c000.snappy.parquet.crc
-   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00005-04424aa7-48e1-4212-bd57-52552c713154-c000.snappy.parquet
-   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00005-04424aa7-48e1-4212-bd57-52552c713154-c000.snappy.parquet.crc
-   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00007-e7a54a4f-bee4-4371-a35d-d284e28eb9f8-c000.snappy.parquet
-   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00007-e7a54a4f-bee4-4371-a35d-d284e28eb9f8-c000.snappy.parquet.crc
-   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00009-086e6cd9-e8c6-4f16-9658-b15baf22905d-c000.snappy.parquet
-   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00009-086e6cd9-e8c6-4f16-9658-b15baf22905d-c000.snappy.parquet.crc
-   ```
+```bash
+$ ls -lsgA /tmp/delta-table
+```
+<details>
+    
+```text
+total 52
+4 drwxr-xr-x 2 NBuser 4096 Oct 22 19:28 _delta_log
+4 -rw-r--r-- 1 NBuser  296 Oct 22 19:28 part-00000-f1f417f7-df64-4c7c-96f2-6a452ae2b49e-c000.snappy.parquet
+4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00000-f1f417f7-df64-4c7c-96f2-6a452ae2b49e-c000.snappy.parquet.crc
+4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00001-b28acb6f-f08a-460f-a24e-4d9c1affee86-c000.snappy.parquet
+4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00001-b28acb6f-f08a-460f-a24e-4d9c1affee86-c000.snappy.parquet.crc
+4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00003-29079c58-d1ad-4604-9c04-0f00bf09546d-c000.snappy.parquet
+4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00003-29079c58-d1ad-4604-9c04-0f00bf09546d-c000.snappy.parquet.crc
+4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00005-04424aa7-48e1-4212-bd57-52552c713154-c000.snappy.parquet
+4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00005-04424aa7-48e1-4212-bd57-52552c713154-c000.snappy.parquet.crc
+4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00007-e7a54a4f-bee4-4371-a35d-d284e28eb9f8-c000.snappy.parquet
+4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00007-e7a54a4f-bee4-4371-a35d-d284e28eb9f8-c000.snappy.parquet.crc
+4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00009-086e6cd9-e8c6-4f16-9658-b15baf22905d-c000.snappy.parquet
+4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00009-086e6cd9-e8c6-4f16-9658-b15baf22905d-c000.snappy.parquet.crc
+```
 
 </details>
 
-### Delta Rust API
+---
 
-> Note: Use a docker volume in case of running into limits "no room left on device"
-> `docker volume create rustbuild` > `docker run --name delta_quickstart -v rustbuild:/tmp --rm -it --entrypoint bash deltaio/delta-docker:3.0.0`
+### Delta Rust API
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
@@ -447,6 +459,36 @@ docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 delta_quickst
 
 </p>
 </details>
+
+> Note: Use a Docker volume in case of running into limits, "no room left on device"
+<details>
+<summary>How to Resolve the <b>no room left on device</b> issue</summary>
+
+---
+
+To fix the issue, you'll need to mount a volume to the container.
+
+You'll need to start by creating the volume.
+```bash
+docker volume create rustbuild
+```
+
+Then you can mount the volume to the container at runtime.
+
+```bash
+docker run \
+  --name delta_quickstart \
+  -v rustbuild:/tmp \
+  --rm -it \
+  --entrypoint bash deltaio/delta-docker:4.0.0
+```
+
+At this point, you should be able to run the examples without any issues.
+
+---
+</details>
+
+---
 
 ### [Optional] ROAPI
 
@@ -521,16 +563,16 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
 We no longer need to create and maintain separate Dockerfiles for each platform. We can now use the `buildx` command to build multi-platform images.
 
 ## Build Locally for Tests
-~~~bash
+```bash
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   -t deltaio_delta-docker:latest 
   -f Dockerfile
   . 
-~~~
+```
 
 ## Build and Push to DockerHub
-~~~bash
+```bash
 # bash
 # Replace placeholders with your values
 REGISTRY_USERNAME=deltaio
@@ -545,4 +587,4 @@ docker buildx build \
   -f Dockerfile \
   --push \
   .
-~~~
+```
