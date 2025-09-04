@@ -12,9 +12,9 @@ async fn main() -> Result<(), deltalake::DeltaTableError>  {
     let delta_table = deltalake::open_table(table_path)
         .await?;
 
-    // register table via `datafusion-ext`
+    // register table via `datafusion`
     ctx.register_table("covid19_nyt", Arc::new(delta_table)).unwrap();
-    
+
     // Query table via datafusion
     let batches = ctx
         .sql("SELECT cases, county, date FROM covid19_nyt LIMIT 5")

@@ -4,3 +4,6 @@ public
 .DS_Store
 
 .idea/
+
+.Cargo.lock
+target/
