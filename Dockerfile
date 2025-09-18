@@ -34,14 +34,15 @@ ARG DELTA_SPARK_VERSION="4.0.0"
 # Note: for 3.0.0 https://pypi.org/project/deltalake/
 ARG DELTALAKE_VERSION="1.1.4"
 ARG JUPYTERLAB_VERSION="4.4.6"
-# requires pandas >1.0.5, py4j>=0.10.9.7, pyarrow>=16
-ARG PANDAS_VERSION="2.3.2"
+# requires py4j>=0.10.9.7, pyarrow>=16
+ARG POLARS_VERSION="1.33.1"
 ARG PYARROW_VERSION="21.0.0"
 ARG ROAPI_VERSION="0.12.6"
 
 # We are explicitly pinning the versions of various libraries which this Docker image runs on.
 RUN pip install --quiet --no-cache-dir delta-spark==${DELTA_SPARK_VERSION} \
-deltalake==${DELTALAKE_VERSION} jupyterlab==${JUPYTERLAB_VERSION} pyarrow==${PYARROW_VERSION} pandas==${PANDAS_VERSION} roapi==${ROAPI_VERSION}
+    deltalake==${DELTALAKE_VERSION} jupyterlab==${JUPYTERLAB_VERSION} pyarrow==${PYARROW_VERSION} \
+    polars==${POLARS_VERSION} roapi==${ROAPI_VERSION}
 
 
 # Environment variables

@@ -43,12 +43,12 @@ docker run \
 
 You can also download the image from DockerHub at [Delta Lake DockerHub](https://go.delta.io/dockerhub)
 
-| Tag               | Platform    | Python | Rust   | Delta-Spark | Spark | JupyterLab | Pandas | ROAPI  |
-|-------------------|-------------|--------|--------|-------------|-------|------------|--------|--------|
-| 1.0.0_3.0.0       | amd64       | 0.12.0 | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0  |
-| 1.0.0_3.0.0_arm64 | arm64       | 0.12.0 | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0  |
-| 4.0.0             | arm64/amd64 | 1.1.14 | 1.1.14 | 4.0.0       | 4.0.0 | 4.4.6      | 2.3.2  | 0.12.6 |
-| latest            | arm64/amd64 | 1.1.14 | 1.1.14 | 4.0.0       | 4.0.0 | 4.4.6      | 2.3.2  | 0.12.6 |
+| Tag               | Platform    | Python | Rust   | Delta-Spark | Spark | JupyterLab | Pandas | Polars | ROAPI  |
+|-------------------|-------------|--------|--------|-------------|-------|------------|--------|--------|--------|
+| 1.0.0_3.0.0       | amd64       | 0.12.0 | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | x      | 0.9.0  |
+| 1.0.0_3.0.0_arm64 | arm64       | 0.12.0 | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | x      | 0.9.0  |
+| 4.0.0             | arm64/amd64 | 1.1.14 | 1.1.14 | 4.0.0       | 4.0.0 | 4.4.6      | x      | 1.33.1 | 0.12.6 |
+| latest            | arm64/amd64 | 1.1.14 | 1.1.14 | 4.0.0       | 4.0.0 | 4.4.6      | x      | 1.33.1 | 0.12.6 |
 
 
 ## Running the Docker environment
@@ -103,54 +103,72 @@ The current version is `delta-spark_2.13:4.0.0` which corresponds to Apache Spar
 
     > Note: The Delta Rust Python bindings are already installed in this Docker. To do this manually in your own environment, run the command: `pip3 install deltalake==1.1.4`
 
-4. Run some basic commands in the shell to write to and read from Delta Lake with Pandas
+4. Run some basic commands in the shell to write to and read from Delta Lake with Polars
 
     ```python
-    import pandas as pd
-    from deltalake.writer import write_deltalake
-    from deltalake import DeltaTable
-
-    # Create a Pandas DataFrame
-    df = pd.DataFrame({"data": range(5)})
-
+    import polars as pl
+    table_path = "/tmp/owners_table"
+    
+    # Create a Polars DataFrame
+    df = pl.DataFrame({'name': ['scott', 'milo'], 'age': [41, 10]})
     # Write to the Delta Lake table
-    write_deltalake("/tmp/deltars_table", df)
-
+    df.write_delta(table_path)
+    
+    # View the Table
+    print(pl.read_delta(table_path))
+    
+    #shape: (2, 2)
+    #┌───────┬─────┐
+    #│ name  ┆ age │
+    #│ ---   ┆ --- │
+    #│ str   ┆ i64 │
+    #╞═══════╪═════╡
+    #│ scott ┆ 41  │
+    #│ milo  ┆ 10  │
+    #└───────┴─────┘
+    
     # Append new data
-    df = pd.DataFrame({"data": range(6, 11)})
-    write_deltalake("/tmp/deltars_table", df, mode="append")
-
-    # Read the Delta Lake table
-    dt = DeltaTable("/tmp/deltars_table")
-
-    # Show the Delta Lake table
-    dt.to_pandas()
+    df2 = pl.DataFrame({'name': ['clover', 'willow'], 'age': [9, 15]})
+    df2.write_delta(table_path, mode="append")
+    
+    # Read the Updated Delta Lake table
+    print(pl.read_delta(table_path))
+    # shape: (4, 2)
+    #┌────────┬─────┐
+    #│ name   ┆ age │
+    #│ ---    ┆ --- │
+    #│ str    ┆ i64 │
+    #╞════════╪═════╡
+    #│ clover ┆ 9   │
+    #│ willow ┆ 15  │
+    #│ scott  ┆ 41  │
+    #│ milo   ┆ 10  │
+    #└────────┴─────┘
     ```
 
-    ```python
-    ## Output
-       data
-    0     0
-    1     1
-    2     2
-    ...
-    8     9
-    9    10
-    ```
+5. Create a `DeltaTable` instance
+   ```python
+   from deltalake import DeltaTable
+   table_path = "/tmp/owners_table"
+   dt = DeltaTable(table_path)
+   ```
 
-5. Review the files
+6. Review the files in the table
 
     ```python
     # List files for the Delta Lake table
-    dt.files()
+    dt.file_uris()
     ```
 
     ```python
     ## Output
-    ['0-6944fddf-60e3-4eab-811d-1398e9f64073-0.parquet', '1-66c7ee6e-6aab-4c74-866d-a82790102652-0.parquet']
+    [
+     '/tmp/owners_table/part-00001-482b379f-4b9c-4e03-aeec-1f0d1e3afbc3-c000.snappy.parquet',
+     '/tmp/owners_table/part-00001-8d41dd54-25d1-4a62-b371-72c61cdca0ff-c000.snappy.parquet'
+    ]
     ```
 
-6. Review history
+7. Review the Delta table history
 
    ```python
     # Review history
@@ -159,45 +177,47 @@ The current version is `delta-spark_2.13:4.0.0` which corresponds to Apache Spar
 
     ```python
     ## Output
-    [{'timestamp': 1698002214493, 'operation': 'WRITE', 'operationParameters': {'mode': 'Append', 'partitionBy': '[]'}, 'clientVersion': 'delta-rs.0.17.0', 'version': 1}, {'timestamp': 1698002207527, 'operation': 'CREATE TABLE', 'operationParameters': {'mode': 'ErrorIfExists', 'protocol': '{"minReaderVersion":1,"minWriterVersion":1}', 'location': 'file:///tmp/deltars_table', 'metadata': '{"configuration":{},"created_time":1698002207525,"description":null,"format":{"options":{},"provider":"parquet"},"id":"bf749aab-22b6-484b-bd73-dc1680ee4384","name":null,"partition_columns":[],"schema":{"fields":[{"metadata":{},"name":"data","nullable":true,"type":"long"}],"type":"struct"}}'}, 'clientVersion': 'delta-rs.0.17.0', 'version': 0}]
+    [{'timestamp': 1758219638102, 'operation': 'WRITE', 'operationParameters': {'mode': 'Append'}, 'engineInfo': 'delta-rs:py-1.1.4', 'operationMetrics': {'execution_time_ms': 6, 'num_added_files': 1, 'num_added_rows': 2, 'num_partitions': 0, 'num_removed_files': 0}, 'clientVersion': 'delta-rs.py-1.1.4', 'version': 1}, {'timestamp': 1758219572045, 'operation': 'WRITE', 'operationParameters': {'mode': 'ErrorIfExists'}, 'engineInfo': 'delta-rs:py-1.1.4', 'clientVersion': 'delta-rs.py-1.1.4', 'operationMetrics': {'execution_time_ms': 13, 'num_added_files': 1, 'num_added_rows': 2, 'num_partitions': 0, 'num_removed_files': 0}, 'version': 0}]
     ```
 
-7. Time Travel (load an older version of the table)
+8. Time Travel (load an older version of the table)
 
     ```python
     # Load initial version of table
-    dt.load_version(0)
-
+    older_data = pl.read_delta(table_path, version=0)
     # Show table
-    dt.to_pandas()
+    print(older_data)
     ```
 
     ```python
     ## Output
-      data
-    0     0
-    1     1
-    2     2
-    3     3
-    4     4
+    shape: (2, 2)
+   ┌───────┬─────┐
+   │ name  ┆ age │
+   │ ---   ┆ --- │
+   │ str   ┆ i64 │
+   ╞═══════╪═════╡
+   │ scott ┆ 41  │
+   │ milo  ┆ 10  │
+   └───────┴─────┘
     ```
 
     > Tip: Follow the delta-rs Python documentation [here](https://delta-io.github.io/delta-rs/python/usage.html#)
 
-8. To verify that you have a Delta Lake table, you can list the contents within the folder of your Delta Lake table. For example, in the previous code, you saved the table in `/tmp/deltars-table`. Once you close your `python3` process, run a list command in your Docker shell, and you should get something similar to below.
+9. To verify that you have a Delta Lake table, you can list the contents within the folder of your Delta Lake table. For example, in the previous code, you saved the table in `/tmp/deltars-table`. Once you close your `python3` process, run a list command in your Docker shell, and you should get something similar to below.
 
     ```bash
-    $ ls -lsgA /tmp/deltars_table
+    $ ls -lsgA /tmp/owners_table/
     ```
 
     ```bash
     total 12
-    4 -rw-r--r-- 1 NBuser 1689 Oct 22 19:16 0-6944fddf-60e3-4eab-811d-1398e9f64073-0.parquet
-    4 -rw-r--r-- 1 NBuser 1691 Oct 22 19:16 1-66c7ee6e-6aab-4c74-866d-a82790102652-0.parquet
-    4 drwxr-xr-x 2 NBuser 4096 Oct 22 19:16 _delta_log
+    4 drwxr-xr-x 2 NBuser 4096 Sep 18 18:20 _delta_log
+    4 -rw-r--r-- 1 NBuser  834 Sep 18 18:20 part-00001-482b379f-4b9c-4e03-aeec-1f0d1e3afbc3-c000.snappy.parquet
+    4 -rw-r--r-- 1 NBuser  822 Sep 18 18:19 part-00001-8d41dd54-25d1-4a62-b371-72c61cdca0ff-c000.snappy.parquet
     ```
 
-9. [Optional] Skip ahead to try out the [Delta Rust API](#delta-rust-api) and [ROAPI](#optional-roapi)
+10. [Optional] Skip ahead to try out the [Delta Rust API](#delta-rust-api) and [ROAPI](#optional-roapi)
 ---
 
 ### JupyterLab Notebook
