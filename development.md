@@ -21,7 +21,7 @@ docker buildx build \
   --platform linux/amd64,linux/arm64 \
   -t ${DOCKER_USER}/delta-docker:${VERSION} \
   -f Dockerfile \
-  --push
+  --push \
   . 
 ```
 > Note: The first build will take longer as it will download the base image, and 
@@ -36,7 +36,7 @@ docker buildx build \
   --platform linux/amd64,linux/arm64 \
   -t ${DOCKER_USER}/delta-docker:${VERSION} \
   -f Dockerfile \
-  --push
+  --push \
   . 
 ```
 ## Run Local Build
