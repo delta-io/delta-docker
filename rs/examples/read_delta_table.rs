@@ -7,11 +7,10 @@ async fn main() -> Result<(), deltalake::DeltaTableError> {
     let table = deltalake::open_table(table_path).await?;
     println!("\r\n=== Delta table metadata ===");
     println!("{}", table);
+    println!("Version: {:?}", table.version());
 
-    // Get Delta table files
-    let files = table.get_files();
-    println!("\r\n=== Delta table files ===");
-    println!("{:?}", files);
+    let files: Vec<String> = table.get_file_uris()?.collect();
+    println!("Files: {}", files.join(", "));
 
     Ok(())
 }
