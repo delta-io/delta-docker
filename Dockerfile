@@ -21,6 +21,7 @@
 # This Docker image uses the official Docker image of [OSS] Apache Spark v4.0.0 as the base container
 # Note: Python version in this image is 3.9.2 and is available as `python3`.
 # Note: PySpark v4.0.0 (https://spark.apache.org/docs/latest/api/python/getting_started/install.html#dependencies)
+
 ARG BASE_CONTAINER=apache/spark:4.0.1-scala2.13-java21-python3-r-ubuntu
 FROM $BASE_CONTAINER AS spark
 FROM spark AS delta
