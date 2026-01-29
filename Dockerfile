@@ -21,7 +21,8 @@
 # This Docker image uses the official Docker image of [OSS] Apache Spark v4.0.0 as the base container
 # Note: Python version in this image is 3.9.2 and is available as `python3`.
 # Note: PySpark v4.0.0 (https://spark.apache.org/docs/latest/api/python/getting_started/install.html#dependencies)
-ARG BASE_CONTAINER=apache/spark:4.0.0-scala2.13-java17-python3-r-ubuntu
+
+ARG BASE_CONTAINER=apache/spark:4.0.1-scala2.13-java21-python3-r-ubuntu
 FROM $BASE_CONTAINER AS spark
 FROM spark AS delta
 
@@ -30,12 +31,12 @@ LABEL authors="Prashanth Babu, Denny Lee, Andrew Bauman, Scott Haines, Tristen W
 
 # Docker image was created and tested with the following versions of packages.
 USER root
-ARG DELTA_SPARK_VERSION="4.0.0"
+ARG DELTA_SPARK_VERSION="4.0.1"
 # Note: for 3.0.0 https://pypi.org/project/deltalake/
-ARG DELTALAKE_VERSION="1.1.4"
+ARG DELTALAKE_VERSION="1.4.0"
 ARG JUPYTERLAB_VERSION="4.4.6"
 # requires py4j>=0.10.9.7, pyarrow>=16
-ARG POLARS_VERSION="1.33.1"
+ARG POLARS_VERSION="1.37.1"
 ARG PYARROW_VERSION="21.0.0"
 ARG ROAPI_VERSION="0.12.6"
 

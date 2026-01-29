@@ -1,6 +1,6 @@
 [package]
 name = "quickstart"
-version = "0.1.2"
+version = "0.1.3"
 rust-version = "1.73"
 authors = ["Denny Lee <denny.g.lee@gmail.com>"]
 license = "Apache-2.0"
@@ -10,7 +10,7 @@ edition = "2021"
 
 [dependencies]
 datafusion = "49.0.0"
-deltalake = { version = "0.28.1", features = ["datafusion"] }
+deltalake = { version = "1.4.0", features = ["datafusion"] }
 tokio = { version = "1" }
 
 [[example]]

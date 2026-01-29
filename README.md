@@ -48,7 +48,8 @@ You can also download the image from DockerHub at [Delta Lake DockerHub](https:/
 | 1.0.0_3.0.0       | amd64       | 0.12.0 | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | x      | 0.9.0  |
 | 1.0.0_3.0.0_arm64 | arm64       | 0.12.0 | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | x      | 0.9.0  |
 | 4.0.0             | arm64/amd64 | 1.1.14 | 1.1.14 | 4.0.0       | 4.0.0 | 4.4.6      | x      | 1.33.1 | 0.12.6 |
-| latest            | arm64/amd64 | 1.1.14 | 1.1.14 | 4.0.0       | 4.0.0 | 4.4.6      | x      | 1.33.1 | 0.12.6 |
+| 4.0.1             | arm64/amd64 | 1.4.0  | 1.4.0  | 4.0.1       | 4.0.1 | 4.4.6      | x      | 1.33.1 | 0.12.6 |
+| latest            | arm64/amd64 | 1.4.0  | 1.4.0  | 4.0.1       | 4.0.1 | 4.4.6      | x      | 1.37.1 | 0.12.6 |
 
 
 ## Running the Docker environment
@@ -585,9 +586,10 @@ We no longer need to create and maintain separate Dockerfiles for each platform.
 ## Build Locally for Tests
 ```bash
 docker buildx build \
-  --platform linux/amd64,linux/arm64 \
-  -t deltaio_delta-docker:latest 
-  -f Dockerfile
+  --platform linux/arm64 \
+  -t deltaio_delta-docker:latest \
+  -f Dockerfile \
+  --load \
   . 
 ```
 
@@ -597,7 +599,7 @@ docker buildx build \
 # Replace placeholders with your values
 REGISTRY_USERNAME=deltaio
 IMAGE_NAME=delta-docker
-IMAGE_TAG=4.0.0   # e.g., 4.0.0 or latest
+IMAGE_TAG=4.0.1   # e.g., 4.0.1 or latest
 
 docker login
 
