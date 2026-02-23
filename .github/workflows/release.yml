@@ -1,0 +1,113 @@
+#
+# Copyright (2023) The Delta Lake Project Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# ---------------------------------------------------------------
+# Release workflow
+#
+# Triggered when a GitHub Release is published. Runs two jobs:
+#
+#   test  → builds the image (single-platform) and runs the full
+#            integration test suite via tests/test_docker.sh.
+#
+#   push  → builds the multi-platform image (linux/amd64 +
+#            linux/arm64) and pushes to Docker Hub as:
+#              deltaio/delta-docker:<release-tag>
+#              deltaio/delta-docker:latest
+#            Only runs when the test job succeeds.
+#
+# Required repository secrets / variables:
+#   vars.ENABLE_DOCKER_PUBLISH  – set to "true" to enable this workflow
+#   vars.DOCKERHUB_USERNAME     – Docker Hub username
+#   secrets.DOCKERHUB_TOKEN     – Docker Hub access token
+# ---------------------------------------------------------------
+
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  # ------------------------------------------------------------
+  # Job 1: build a single-platform image and run integration tests
+  # ------------------------------------------------------------
+  test:
+    name: Build & test
+    runs-on: ubuntu-latest
+    # Flip this on once DOCKERHUB_USERNAME (var) and DOCKERHUB_TOKEN (secret)
+    # are configured in Settings → Secrets and variables → Actions.
+    if: vars.ENABLE_DOCKER_PUBLISH == 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Build a local image (single platform) so we can run tests against it.
+      # `load: true` exports the image into the local Docker daemon.
+      - name: Build image (test)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: delta_quickstart:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run integration tests
+        run: bash tests/test_docker.sh delta_quickstart:ci
+
+  # ------------------------------------------------------------
+  # Job 2: build multi-platform and push to Docker Hub
+  # ------------------------------------------------------------
+  push:
+    name: Push to Docker Hub
+    runs-on: ubuntu-latest
+    needs: test   # only runs when the test job passes
+    environment: release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # QEMU lets Buildx emulate non-native platforms (e.g. arm64 on
+      # an amd64 runner) so we can produce a multi-platform manifest.
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push (multi-platform)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          # github.ref_name is the release tag exactly as typed (e.g. "4.1.0")
+          tags: |
+            deltaio/delta-docker:${{ github.ref_name }}
+            deltaio/delta-docker:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
