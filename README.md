@@ -12,7 +12,9 @@ Follow the steps below to build an Apache Spark<sup>TM</sup> image with Delta La
 1. [Working with Docker](#working-with-docker)
    1. [Build the image](#build-the-image)
    2. [Docker Hub](#docker-hub)
-2. [Choose an interface](#choose-an-interface)
+2. [Publishing a Release](#publishing-a-release)
+3. [Testing the Image](#testing-the-image)
+4. [Choose an interface](#choose-an-interface)
 
 > Note: The Python version available in this Docker image is 3.10.12 and is available as `python3`.
 
@@ -49,7 +51,8 @@ You can also download the image from DockerHub at [Delta Lake DockerHub](https:/
 | 1.0.0_3.0.0_arm64 | arm64       | 0.12.0 | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | x      | 0.9.0  |
 | 4.0.0             | arm64/amd64 | 1.1.14 | 1.1.14 | 4.0.0       | 4.0.0 | 4.4.6      | x      | 1.33.1 | 0.12.6 |
 | 4.0.1             | arm64/amd64 | 1.4.0  | 1.4.0  | 4.0.1       | 4.0.1 | 4.4.6      | x      | 1.33.1 | 0.12.6 |
-| latest            | arm64/amd64 | 1.4.0  | 1.4.0  | 4.0.1       | 4.0.1 | 4.4.6      | x      | 1.37.1 | 0.12.6 |
+| 4.1.0             | arm64/amd64 | 1.4.0  | 1.4.0  | 4.1.0       | 4.1.0 | 4.4.6      | x      | 1.33.1 | 0.12.6 |
+| latest            | arm64/amd64 | 1.4.0  | 1.4.0  | 4.1.0       | 4.1.0 | 4.4.6      | x      | 1.37.1 | 0.12.6 |
 
 
 ## Running the Docker environment
@@ -610,3 +613,75 @@ docker buildx build \
   --push \
   .
 ```
+
+## Publishing a Release
+
+The repository includes a GitHub Actions workflow (`.github/workflows/release.yml`) that automatically builds and publishes the Docker image to [Docker Hub](https://go.delta.io/dockerhub) when a GitHub Release is published.
+
+### Workflow steps
+
+| Job | What it does |
+|---|---|
+| **test** | Builds a single-platform image on the Actions runner and runs the full `tests/test_docker.sh` integration suite. |
+| **push** | Only runs when `test` passes. Builds a multi-platform image (`linux/amd64` + `linux/arm64`) and pushes to `deltaio/delta-docker` on Docker Hub. |
+
+### Tagging convention
+
+The image tag is derived from the GitHub Release tag directly via `github.ref_name`:
+
+| GitHub Release tag | Docker Hub tags produced |
+|---|---|
+| `4.1.0` | `deltaio/delta-docker:4.1.0`, `deltaio/delta-docker:latest` |
+
+### Required secrets / variables
+
+Configure these in **Settings → Secrets and variables → Actions** on the repository:
+
+| Name | Type | Description |
+|---|---|---|
+| `DOCKERHUB_USERNAME` | Variable (`vars`) | Docker Hub username |
+| `DOCKERHUB_TOKEN` | Secret (`secrets`) | Docker Hub access token |
+
+---
+
+## Testing the Image
+
+After building the image locally you can run the integration test suite to verify that all packages installed correctly and that core Delta Lake operations work end-to-end.
+
+### Quick start
+
+```bash
+# Build then test in one step
+make build-and-test
+
+# Or run tests against an already-built image
+make test
+
+# Override the image name if needed
+make test IMAGE_NAME=my_custom_image
+```
+
+### Running the test script directly
+
+```bash
+./tests/test_docker.sh [IMAGE_NAME]
+```
+
+`IMAGE_NAME` defaults to `delta_quickstart` when omitted.
+
+### What is tested
+
+| Category | What is verified |
+|---|---|
+| System tools | `vim`, `curl`, `tree` are installed |
+| Python runtime | `python3` and `pip` are on `PATH` |
+| Package imports | `delta`, `deltalake`, `polars`, `pyarrow`, `pyspark`, `jupyterlab` all import cleanly |
+| Package versions | Installed versions match the pinned `ARG` values in the `Dockerfile` |
+| Apache Spark | `spark-submit` and `pyspark` are on `PATH` |
+| Rust toolchain | `rustc` and `cargo` are available via `~/.cargo/env` |
+| Functional (Polars) | Write and append a Delta table using `polars.write_delta` and read it back |
+| Functional (deltalake) | `DeltaTable` returns a non-empty file URI list and history |
+
+A non-zero exit code is returned (and all failures are reported) if any test fails, making this suitable for use in CI.
+
+---
