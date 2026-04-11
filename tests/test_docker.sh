@@ -172,7 +172,32 @@ run_test "spark-submit is on PATH"  "spark-submit --version"
 run_test "pyspark is on PATH"       "pyspark --version"
 
 # ---------------------------------------------------------------
-# 6. Rust toolchain
+# 6. startup.sh artifact resolution
+# ---------------------------------------------------------------
+
+section "startup.sh artifact resolution"
+run_test_verbose "startup.sh selects Spark 4.1 Delta artifact" \
+  "set -euo pipefail
+mkdir -p /tmp/mock-spark/bin
+printf '%s\n' '#!/usr/bin/env bash' 'echo \"Spark version 4.1.1\" >&2' > /tmp/mock-spark/bin/spark-submit
+printf '%s\n' '#!/usr/bin/env bash' 'echo \"\$*\"' > /tmp/mock-spark/bin/pyspark
+chmod +x /tmp/mock-spark/bin/spark-submit /tmp/mock-spark/bin/pyspark
+startup_output=\$(SPARK_HOME=/tmp/mock-spark DELTA_SPARK_VERSION=4.1.0 bash startup.sh 2>&1)
+echo \"\$startup_output\"
+[[ \"\$startup_output\" == *\"--packages io.delta:delta-spark_4.1_2.13:4.1.0\"* ]]"
+
+run_test_verbose "startup.sh selects Spark 4.0 Delta artifact" \
+  "set -euo pipefail
+mkdir -p /tmp/mock-spark/bin
+printf '%s\n' '#!/usr/bin/env bash' 'echo \"Spark version 4.0.3\" >&2' > /tmp/mock-spark/bin/spark-submit
+printf '%s\n' '#!/usr/bin/env bash' 'echo \"\$*\"' > /tmp/mock-spark/bin/pyspark
+chmod +x /tmp/mock-spark/bin/spark-submit /tmp/mock-spark/bin/pyspark
+startup_output=\$(SPARK_HOME=/tmp/mock-spark DELTA_SPARK_VERSION=4.1.0 bash startup.sh 2>&1)
+echo \"\$startup_output\"
+[[ \"\$startup_output\" == *\"--packages io.delta:delta-spark_4.0_2.13:4.1.0\"* ]]"
+
+# ---------------------------------------------------------------
+# 7. Rust toolchain
 # ---------------------------------------------------------------
 
 section "Rust Toolchain"
@@ -180,7 +205,7 @@ run_test "rustc is available"       'source "$HOME/.cargo/env" && rustc --versio
 run_test "cargo is available"       'source "$HOME/.cargo/env" && cargo --version'
 
 # ---------------------------------------------------------------
-# 7. Functional: delta-rs (Python) write/read via Polars
+# 8. Functional: delta-rs (Python) write/read via Polars
 # ---------------------------------------------------------------
 
 section "Functional: delta-rs + Polars"
@@ -215,7 +240,7 @@ print('Polars Delta append OK')
 \""
 
 # ---------------------------------------------------------------
-# 8. Functional: deltalake Python API
+# 9. Functional: deltalake Python API
 # ---------------------------------------------------------------
 
 section "Functional: deltalake Python API"
