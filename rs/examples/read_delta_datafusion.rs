@@ -1,11 +1,13 @@
 use datafusion::execution::context::SessionContext;
-use std::sync::Arc;
 use deltalake;
+use std::sync::Arc;
+use url::Url;
 
 #[tokio::main(flavor = "current_thread")]
-async fn main() -> Result<(), deltalake::DeltaTableError>  {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // This table is included in the Rust example
-    let table_path = "data/COVID-19_NYT";
+    let table_path = Url::from_file_path(std::fs::canonicalize("data/COVID-19_NYT")?)
+        .expect("Invalid file path");
 
     // datafusion SessionContext
     let ctx = SessionContext::new();
@@ -13,7 +15,11 @@ async fn main() -> Result<(), deltalake::DeltaTableError>  {
         .await?;
 
     // register table via `datafusion`
-    ctx.register_table("covid19_nyt", Arc::new(delta_table)).unwrap();
+    ctx.register_table(
+        "covid19_nyt",
+        Arc::new(delta_table.table_provider().build().await?),
+    )
+    .unwrap();
 
     // Query table via datafusion
     let batches = ctx

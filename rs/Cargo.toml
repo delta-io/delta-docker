@@ -9,9 +9,10 @@ description = "Quick Start Delta Lake Rust examples"
 edition = "2021"
 
 [dependencies]
-datafusion = "49.0.0"
-deltalake = { version = "0.28.0", features = ["datafusion"] }
+datafusion = "53.1.0"
+deltalake = { version = "0.32.4", features = ["datafusion"] }
 tokio = { version = "1" }
+url = "2.5"
 
 [[example]]
 name = "read_delta_table"
