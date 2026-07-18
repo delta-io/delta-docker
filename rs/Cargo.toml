@@ -10,7 +10,7 @@ edition = "2021"
 
 [dependencies]
 datafusion = "49.0.0"
-deltalake = { version = "1.4.0", features = ["datafusion"] }
+deltalake = { version = "0.28.0", features = ["datafusion"] }
 tokio = { version = "1" }
 
 [[example]]
