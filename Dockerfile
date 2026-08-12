@@ -41,7 +41,7 @@ ARG PYARROW_VERSION="25.0.0"
 ARG ROAPI_VERSION="0.12.7"
 
 # Optional pip index URL override, e.g. for building behind a corporate PyPI
-# proxy: --build-arg PYPI_PROXY_URL=https://pypi-proxy.dev.databricks.com/simple/
+# proxy: --build-arg PYPI_PROXY_URL=https://pypi-proxy.your-company.com/simple/
 ARG PYPI_PROXY_URL=""
 ENV PYPI_PROXY_URL=${PYPI_PROXY_URL}
 ENV PIP_INDEX_URL=${PYPI_PROXY_URL:-https://pypi.org/simple/}
