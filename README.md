@@ -236,7 +236,7 @@ The current version is `delta-spark_2.13:4.0.0` which corresponds to Apache Spar
       --rm \
       -it \
       -p 8888-8889:8888-8889 \
-      delta_quickstart
+      deltaio/delta-docker:latest
     ```
 
 3. Running the above command gives a JupyterLab notebook URL. Copy that URL and launch a browser to follow along with the notebook and run each cell.
