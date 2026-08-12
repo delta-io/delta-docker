@@ -27,6 +27,7 @@
 set -euo pipefail
 
 IMAGE="${1:-delta_quickstart}"
+MAVEN_PROXY_URL="${2:-https://repo.1.maven.org/maven2/}"
 PASS=0
 FAIL=0
 
@@ -47,6 +48,7 @@ run_test() {
   printf "  %-60s" "${description}"
   if docker run --rm \
       --user "${user}" \
+      --env "MAVEN_PROXY_URL=${MAVEN_PROXY_URL}" \
       --entrypoint bash \
       "${IMAGE}" -c "${cmd}" \
       >/dev/null 2>&1; then
@@ -134,7 +136,7 @@ section "Python Package Versions"
 run_test "delta-spark version matches Dockerfile ARG" \
   "python3 -c \"
 import delta
-expected = '4.1.0'
+expected = '4.2.0'
 actual = delta.__version__
 assert actual == expected, f'Expected {expected}, got {actual}'
 \""
@@ -142,7 +144,7 @@ assert actual == expected, f'Expected {expected}, got {actual}'
 run_test "deltalake version matches Dockerfile ARG" \
   "python3 -c \"
 import deltalake
-expected = '1.4.2'
+expected = '1.6.2'
 actual = deltalake.__version__
 assert actual == expected, f'Expected {expected}, got {actual}'
 \""
@@ -150,7 +152,7 @@ assert actual == expected, f'Expected {expected}, got {actual}'
 run_test "polars version matches Dockerfile ARG" \
   "python3 -c \"
 import polars
-expected = '1.38.1'
+expected = '1.43.2'
 actual = polars.__version__
 assert actual == expected, f'Expected {expected}, got {actual}'
 \""
@@ -158,7 +160,7 @@ assert actual == expected, f'Expected {expected}, got {actual}'
 run_test "pyarrow version matches Dockerfile ARG" \
   "python3 -c \"
 import pyarrow
-expected = '23.0.1'
+expected = '25.0.0'
 actual = pyarrow.__version__
 assert actual == expected, f'Expected {expected}, got {actual}'
 \""

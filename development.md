@@ -10,10 +10,29 @@ docker buildx build \
   .
 ```
 
+### Building behind a PyPI proxy
+
+If your network can't reach the public PyPI index directly (e.g. corporate proxy), pass
+`PYPI_PROXY_URL` as a build-arg so `pip install` uses your proxy/mirror instead:
+
+```bash
+docker buildx build \
+  --platform linux/arm64 \
+  -t deltaio_delta-docker:latest \
+  -f Dockerfile \
+  --build-arg PYPI_PROXY_URL=https://pypi-proxy.dev.databricks.com/simple/ \
+  --load \
+  .
+```
+
+`PYPI_PROXY_URL` is also exposed as an `ENV` var in the resulting image, and it's used to set
+`PIP_INDEX_URL` (falling back to `https://pypi.org/simple/` when unset), so any subsequent
+`pip install` inside the container will use the same index.
+
 ### Build and Push
 ```bash
 $DOCKER_USER=deltaio
-$VERSION=4.0.0
+$VERSION=4.3.1
 
 echo "${DOCKER_USER}/delta-docker:${VERSION}"
 
@@ -30,7 +49,7 @@ docker buildx build \
 Build without the cache only if you want to rebuild the full image from scratch.
 ```bash
 $DOCKER_USER=deltaio
-$VERSION=4.0.0
+$VERSION=4.3.1
 docker buildx build \
   --no-cache \
   --platform linux/amd64,linux/arm64 \
