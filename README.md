@@ -82,7 +82,7 @@ Once the image has been built or you have downloaded the correct image, you can 
 
 In the following instructions, the variable `${DELTA_PACKAGE_VERSION}` refers to the Delta Lake Package version.
 
-The current version is `delta-spark_2.13:4.0.0` which corresponds to Apache Spark 4.x release line.
+For Spark 4.x, use Spark-version-specific Delta artifacts: `delta-spark_4.1_2.13:<version>` for Spark 4.1 and `delta-spark_4.0_2.13:<version>` for Spark 4.0 (use `delta-spark_2.13:<version>` for older Spark lines).
 
 ## Choose an Interface
 
