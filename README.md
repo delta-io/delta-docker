@@ -236,7 +236,7 @@ For Spark 4.x, use Spark-version-specific Delta artifacts: `delta-spark_4.1_2.13
       --rm \
       -it \
       -p 8888-8889:8888-8889 \
-      delta_quickstart
+      deltaio/delta-docker:latest
     ```
 
 3. Running the above command gives a JupyterLab notebook URL. Copy that URL and launch a browser to follow along with the notebook and run each cell.
