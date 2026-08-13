@@ -21,7 +21,7 @@ docker buildx build \
   --platform linux/arm64 \
   -t deltaio_delta-docker:latest \
   -f Dockerfile \
-  --build-arg PYPI_PROXY_URL=https://pypi-proxy.dev.databricks.com/simple/ \
+  --build-arg PYPI_PROXY_URL=https://pypi-proxy.your-company.com/simple/ \
   --load \
   .
 ```
@@ -34,7 +34,7 @@ docker buildx build \
 
 ```bash
 $DOCKER_USER=deltaio
-$VERSION=4.2.0
+$VERSION=4.3.0
 
 echo "${DOCKER_USER}/delta-docker:${VERSION}"
 
@@ -53,7 +53,7 @@ Build without the cache only if you want to rebuild the full image from scratch.
 
 ```bash
 $DOCKER_USER=deltaio
-$VERSION=4.2.0
+$VERSION=4.3.0
 docker buildx build \
   --no-cache \
   --platform linux/amd64,linux/arm64 \
