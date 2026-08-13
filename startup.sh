@@ -4,7 +4,7 @@ source "$HOME/.cargo/env"
 
 export PYSPARK_DRIVER_PYTHON=jupyter
 export PYSPARK_DRIVER_PYTHON_OPTS='lab --ip=0.0.0.0'
-export DELTA_SPARK_VERSION='4.3.0'
+export DELTA_SPARK_VERSION='4.3.1'
 export SPARK_VERSION='4.1'
 export DELTA_PACKAGE_VERSION=delta-spark_${SPARK_VERSION}_2.13:${DELTA_SPARK_VERSION}
 export MAVEN_PROXY_URL=${MAVEN_PROXY_URL:-https://repo.1.maven.org/maven2/}
