@@ -34,7 +34,7 @@ docker buildx build \
 
 ```bash
 $DOCKER_USER=deltaio
-$VERSION=4.3.0
+$VERSION=4.3.1
 
 echo "${DOCKER_USER}/delta-docker:${VERSION}"
 
