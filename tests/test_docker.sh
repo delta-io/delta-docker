@@ -136,7 +136,7 @@ section "Python Package Versions"
 run_test "delta-spark version matches Dockerfile ARG" \
   "python3 -c \"
 import delta
-expected = '4.2.0'
+expected = '4.3.0'
 actual = delta.__version__
 assert actual == expected, f'Expected {expected}, got {actual}'
 \""

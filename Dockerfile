@@ -31,7 +31,7 @@ LABEL authors="Prashanth Babu, Denny Lee, Andrew Bauman, Scott Haines, Tristen W
 
 # Docker image was created and tested with the following versions of packages.
 USER root
-ARG DELTA_SPARK_VERSION="4.2.0"
+ARG DELTA_SPARK_VERSION="4.3.0"
 # Note: for 3.0.0 https://pypi.org/project/deltalake/
 ARG DELTALAKE_VERSION="1.6.2"
 ARG JUPYTERLAB_VERSION="4.6.2"

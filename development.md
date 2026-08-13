@@ -21,7 +21,7 @@ docker buildx build \
   --platform linux/arm64 \
   -t deltaio_delta-docker:latest \
   -f Dockerfile \
-  --build-arg PYPI_PROXY_URL=https://pypi-proxy.dev.databricks.com/simple/ \
+  --build-arg PYPI_PROXY_URL=https://pypi-proxy.your-company.com/simple/ \
   --load \
   .
 ```
