@@ -31,14 +31,20 @@ LABEL authors="Prashanth Babu, Denny Lee, Andrew Bauman, Scott Haines, Tristen W
 
 # Docker image was created and tested with the following versions of packages.
 USER root
-ARG DELTA_SPARK_VERSION="4.1.0"
+ARG DELTA_SPARK_VERSION="4.2.0"
 # Note: for 3.0.0 https://pypi.org/project/deltalake/
-ARG DELTALAKE_VERSION="1.4.2"
-ARG JUPYTERLAB_VERSION="4.4.6"
+ARG DELTALAKE_VERSION="1.6.2"
+ARG JUPYTERLAB_VERSION="4.6.2"
 # requires py4j>=0.10.9.7, pyarrow>=16
-ARG POLARS_VERSION="1.38.1"
-ARG PYARROW_VERSION="23.0.1"
-ARG ROAPI_VERSION="0.12.6"
+ARG POLARS_VERSION="1.43.2"
+ARG PYARROW_VERSION="25.0.0"
+ARG ROAPI_VERSION="0.12.7"
+
+# Optional pip index URL override, e.g. for building behind a corporate PyPI
+# proxy: --build-arg PYPI_PROXY_URL=https://pypi-proxy.your-company.com/simple/
+ARG PYPI_PROXY_URL=""
+ENV PYPI_PROXY_URL=${PYPI_PROXY_URL}
+ENV PIP_INDEX_URL=${PYPI_PROXY_URL:-https://pypi.org/simple/}
 
 # We are explicitly pinning the versions of various libraries which this Docker image runs on.
 RUN pip install --quiet --no-cache-dir delta-spark==${DELTA_SPARK_VERSION} \
