@@ -1,4 +1,5 @@
 ## Build Locally
+
 If you want to test out the local build, use the following command:
 
 ```bash
@@ -30,9 +31,10 @@ docker buildx build \
 `pip install` inside the container will use the same index.
 
 ### Build and Push
+
 ```bash
 $DOCKER_USER=deltaio
-$VERSION=4.3.1
+$VERSION=4.2.0
 
 echo "${DOCKER_USER}/delta-docker:${VERSION}"
 
@@ -43,10 +45,12 @@ docker buildx build \
   --push \
   . 
 ```
+
 > Note: The first build will take longer as it will download the base image, and 
 > set up the rust environment in the image.
 
 Build without the cache only if you want to rebuild the full image from scratch.
+
 ```bash
 $DOCKER_USER=deltaio
 $VERSION=4.3.1
@@ -58,9 +62,13 @@ docker buildx build \
   --push \
   . 
 ```
+
+
+
 ## Run Local Build
 
 Run the environment and pop into the bash shell.
+
 ```bash
 docker run \
   --name delta_quickstart \
@@ -71,6 +79,7 @@ docker run \
 ```
 
 Run the environment and pop into the jupyter lab.
+
 ```bash
 docker run \
   --name delta_quickstart \
@@ -79,3 +88,4 @@ docker run \
   -p 8888-8889:8888-8889 \
   deltaio_delta-docker:latest
 ```
+
