@@ -132,14 +132,11 @@ run_test "jupyterlab imports cleanly"   "python3 -c 'import jupyterlab'"
 # 4. Python package versions
 # ---------------------------------------------------------------
 
-# > note: the 4.3.1 release didn't bump the version.py (https://github.com/delta-io/delta/blob/v4.3.1/python/delta/version.py)
-# > so we're using the 4.3.0 version even though it is technically 4.3.1.
-
 section "Python Package Versions"
 run_test "delta-spark version matches Dockerfile ARG" \
   "python3 -c \"
 import delta
-expected = '4.3.0'
+expected = '4.4.0'
 actual = delta.__version__
 assert actual == expected, f'Expected {expected}, got {actual}'
 \""
