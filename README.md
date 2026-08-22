@@ -53,7 +53,8 @@ You can also download the image from DockerHub at [Delta Lake DockerHub](https:/
 | 4.2.0             | arm64/amd64 | 1.6.2  | 1.6.2  | 4.2.0       | 4.2.0 | 4.6.2      | x      | 1.43.2 | 0.12.7 |
 | 4.3.0             | arm64/amd64 | 1.6.2  | 1.6.2  | 4.3.0       | 4.1.1 | 4.6.2      | x      | 1.43.2 | 0.12.7 |
 | 4.3.1             | arm64/amd64 | 1.6.2  | 1.6.2  | 4.3.1       | 4.1.1 | 4.6.2      | x      | 1.43.2 | 0.12.7 |
-| latest            | arm64/amd64 | 1.6.2  | 1.6.2  | 4.3.1       | 4.1.1 | 4.6.2      | x      | 1.43.2 | 0.12.7 |
+| 4.4.0             | arm64/amd64 | 1.6.2  | 1.6.2  | 4.4.0       | 4.2.0 | 4.6.2      | x      | 1.43.2 | 0.12.7 |
+| latest            | arm64/amd64 | 1.6.2  | 1.6.2  | 4.4.0       | 4.2.0 | 4.6.2      | x      | 1.43.2 | 0.12.7 |
 
 
 ## Running the Docker environment
@@ -83,7 +84,7 @@ Once the image has been built or you have downloaded the correct image, you can 
 
 In the following instructions, the variable `${DELTA_PACKAGE_VERSION}` refers to the Delta Lake Package version.
 
-The current version is `delta-spark_2.13:4.3.1` which corresponds to Apache Spark 4.x release line.
+The current version is `delta-spark_2.13:4.4.0` which corresponds to Apache Spark 4.x release line.
 
 ## Choose an Interface
 

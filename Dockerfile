@@ -18,11 +18,11 @@
 # Dockerfile for Delta Lake quickstart
 # ------------------------------------------------
 
-# This Docker image uses the official Docker image of [OSS] Apache Spark v4.0.0 as the base container
-# Note: Python version in this image is 3.9.2 and is available as `python3`.
-# Note: PySpark v4.0.0 (https://spark.apache.org/docs/latest/api/python/getting_started/install.html#dependencies)
+# This Docker image uses the official Docker image of [OSS] Apache Spark v4.2.0 as the base container
+# Note: Python version in this image is 3.10.12 and is available as `python3`.
+# Note: PySpark v4.2.0 (https://spark.apache.org/docs/latest/api/python/getting_started/install.html#dependencies)
 
-ARG BASE_CONTAINER=apache/spark:4.1.1-scala2.13-java21-python3-r-ubuntu
+ARG BASE_CONTAINER=apache/spark:4.2.0-java21-python3
 FROM $BASE_CONTAINER AS spark
 FROM spark AS delta
 
@@ -31,8 +31,7 @@ LABEL authors="Prashanth Babu, Denny Lee, Andrew Bauman, Scott Haines, Tristen W
 
 # Docker image was created and tested with the following versions of packages.
 USER root
-ARG DELTA_SPARK_VERSION="4.3.1"
-# Note: for 3.0.0 https://pypi.org/project/deltalake/
+ARG DELTA_SPARK_VERSION="4.4.0"
 ARG DELTALAKE_VERSION="1.6.2"
 ARG JUPYTERLAB_VERSION="4.6.2"
 # requires py4j>=0.10.9.7, pyarrow>=16

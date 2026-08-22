@@ -34,7 +34,7 @@ docker buildx build \
 
 ```bash
 $DOCKER_USER=deltaio
-$VERSION=4.3.1
+$VERSION=4.4.0
 
 echo "${DOCKER_USER}/delta-docker:${VERSION}"
 
@@ -53,7 +53,7 @@ Build without the cache only if you want to rebuild the full image from scratch.
 
 ```bash
 $DOCKER_USER=deltaio
-$VERSION=4.3.1
+$VERSION=4.4.0
 docker buildx build \
   --no-cache \
   --platform linux/amd64,linux/arm64 \
